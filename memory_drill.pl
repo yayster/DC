@@ -19,26 +19,9 @@ do {
     my @incorrect;
     my $order_ref = randomize_elements( \@list );
     my @order = @$order_ref;
-    foreach my $position ( @order ) {
-	if( &question( $position, \@list ) ) {
-	    print "Correct!\n";
-	} else {
-	    print "Sorry!  \"" 
-		. $list[ $position ] 
-		. "\" is the correct answer.\n";
-	    push( @incorrect, $position );
-	}
-    }
+    &quiz( \@list, $order_ref, \@incorrect );
     if( scalar( @incorrect ) > 0 ) {
-	foreach my $position ( @incorrect ) {
-	    if( &question( $position, \@list ) ) {
-		print "Correct!\n";
-	    } else {
-		print "Sorry!  \"" 
-		    . $list[ $position ] 
-		    . "\" is the correct answer.\n";
-	    }
-	}
+	&quiz( \@list, \@incorrect, \@incorrect );
     } else {
 	$FINISHED = 1;
     }
@@ -46,6 +29,21 @@ do {
 CORE::exit(0);
 ###############################################################################
 # Subroutines
+sub quiz {
+    my $list_ref = shift;
+    my $order_ref = shift;
+    my $incorrect_ref = shift;
+    foreach my $position ( @$order_ref ) {
+	if( &question( $position, $list_ref ) ) {
+	    print "Correct!\n";
+	} else {
+	    print "Sorry!  \"" 
+		. $$list_ref[ $position ] 
+		. "\" is the correct answer.\n";
+	    push( @$incorrect_ref, $position );
+	}
+    }
+}
 sub question {
     my $position = shift;
     my $list_ref = shift;
