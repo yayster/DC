@@ -83,9 +83,7 @@ sub question_type_three {
 sub question_type_one {
     my $position = shift;
     my $list_ref = shift;
-    my @list = @$list_ref;
-    $position++;
-    my $placement = &numeric_suffix( $position );
+    my $placement = &numeric_suffix( $position + 1 );
     print "What is the " . $placement . " planet from the Sun?\n";
 }
 sub numeric_suffix {
