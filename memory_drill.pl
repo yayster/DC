@@ -33,46 +33,74 @@ sub quiz {
     my $order_ref = shift;
     my $incorrect_ref = shift;
     foreach my $position ( @$order_ref ) {
-	if( &question( $position, $list_ref ) ) {
-	    print "Correct!\n";
-	} else {
-	    print "Sorry!  \"" 
-		. $$list_ref[ $position ] 
-		. "\" is the correct answer.\n";
-	    push( @$incorrect_ref, $position );
-	}
+	&question( $position, $list_ref, $incorrect_ref );
     }
 }
 sub question {
     my $position = shift;
     my $list_ref = shift;
-    my $type = int( rand( 2 ) );
+    my $incorrect_ref = shift;
+    my $number_answer = 0;
+    my $type = int( rand( 3 ) );
     if( $type == 0 ) {
 	&question_type_one( $position, $list_ref );
     } elsif( $type == 1 ) {
 	&question_type_two( $position, $list_ref );
+    } elsif( $type == 2 ) {
+	&question_type_three( $position, $list_ref );
+        $number_answer = 1;	
     }
     my $answer = <>;
     my $match = $list[ $position ];
-    return( $answer =~ /$match/i );
-
+    my $correct = 0;
+    unless( $number_answer ) {
+	$correct = 1 if( $answer =~ /$match/i );
+    } else {
+	$answer =~ /^(\d*)/;
+	my $answer_number = $1;
+	$correct = 1 if( $answer_number == $position + 1 );
+    }	
+    if( $correct ) {
+	print "Correct!\n";
+    } else {
+	my $correct_answer;
+	if( $number_answer ) {
+	    $correct_answer = &numeric_suffix( $position );
+	} else {
+	    $correct_answer = $$list_ref[ $position ];
+	}
+	print "Sorry!  \""
+	    . $correct_answer 
+	    . "\" is the correct answer.\n";
+	push( @$incorrect_ref, $position );
+    }
+}
+sub question_type_three {
+    my $position = shift;
+    my $list_ref = shift;
+    print "What planet from the sun is " . $$list_ref[ $position ] . "?\n";  
 }
 sub question_type_one {
     my $position = shift;
     my $list_ref = shift;
     my @list = @$list_ref;
     $position++;
-    my $placement;
-    if( ( $position % 10 )  == 1 && $position != 11 ) {
-	$placement = $position . "st";
-    } elsif( ( $position % 10 ) == 2 && $position != 12 ) {
-	$placement = $position . "nd";
-    } elsif( ( $position % 10 ) == 3 && $position != 13 ) {
-	$placement = $position . "rd";
-    } else {
-	$placement = $position . "th";
-    }
+    my $placement = &numeric_suffix( $position );
     print "What is the " . $placement . " planet from the Sun?\n";
+}
+sub numeric_suffix {
+    my $number = shift;
+    my $number_with_suffix;
+    if( ( $number % 10 )  == 1 && $number != 11 ) {
+	$number_with_suffix = $number . "st";
+    } elsif( ( $number % 10 ) == 2 && $number != 12 ) {
+	$number_with_suffix = $number . "nd";
+    } elsif( ( $number % 10 ) == 3 && $number != 13 ) {
+	$number_with_suffix = $number . "rd";
+    } else {
+	$number_with_suffix = $number . "th";
+    }
+    return( $number_with_suffix );
 }
 sub question_type_two {
     my $position = shift;
