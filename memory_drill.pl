@@ -18,7 +18,6 @@ do {
     print "Hello, world.\n";
     my @incorrect;
     my $order_ref = randomize_elements( \@list );
-    my @order = @$order_ref;
     &quiz( \@list, $order_ref, \@incorrect );
     if( scalar( @incorrect ) > 0 ) {
 	&quiz( \@list, \@incorrect, \@incorrect );
