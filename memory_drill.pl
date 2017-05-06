@@ -46,6 +46,20 @@ sub quiz {
 sub question {
     my $position = shift;
     my $list_ref = shift;
+    my $type = int( rand( 2 ) );
+    if( $type == 0 ) {
+	&question_type_one( $position, $list_ref );
+    } elsif( $type == 1 ) {
+	&question_type_two( $position, $list_ref );
+    }
+    my $answer = <>;
+    my $match = $list[ $position ];
+    return( $answer =~ /$match/i );
+
+}
+sub question_type_one {
+    my $position = shift;
+    my $list_ref = shift;
     my @list = @$list_ref;
     $position++;
     my $placement;
@@ -59,9 +73,19 @@ sub question {
 	$placement = $position . "th";
     }
     print "What is the " . $placement . " planet from the Sun?\n";
-    my $answer = <>;
-    my $match = $list[ $position - 1 ];
-    return( $answer =~ /$match/i );
+}
+sub question_type_two {
+    my $position = shift;
+    my $list_ref = shift;
+    if( $position == 0 ) {
+	print "What planet is closer to the Sun than " 
+	    . $$list_ref[ $position + 1 ] . "?\n";
+    } elsif( $position == scalar( @$list_ref ) - 1 ) {
+	print "What planet is after " . $$list_ref[ $position - 1 ] . "?\n";
+    } else {
+	print "What planet is between " . $$list_ref[ $position - 1 ]
+	    . " and " . $$list_ref[ $position + 1 ] . "?\n";
+    }
 }
 sub randomize_elements {
     my $list_ref = shift;
