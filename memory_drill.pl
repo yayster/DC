@@ -65,7 +65,7 @@ sub question {
     } else {
 	my $correct_answer;
 	if( $number_answer ) {
-	    $correct_answer = &numeric_suffix( $position );
+	    $correct_answer = &numeric_suffix( $position + 1 );
 	} else {
 	    $correct_answer = $$list_ref[ $position ];
 	}
